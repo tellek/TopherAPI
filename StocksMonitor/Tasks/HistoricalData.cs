@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System.Data;
 using System.Threading;
+using Contracts;
 
 namespace StocksMonitor.Tasks
 {
@@ -98,7 +99,7 @@ namespace StocksMonitor.Tasks
             request.AddHeader("cache-control", "no-cache");
             request.AddHeader("Connection", "keep-alive");
             request.AddHeader("Host", "api.polygon.io");
-            request.AddQueryParameter("apiKey", "");
+            request.AddQueryParameter("apiKey", AppSettings.Settings.PolygonApiKey);
 
             IRestResponse response = client.Execute(request);
             return JsonConvert.DeserializeObject<Candlesticks>(response.Content);

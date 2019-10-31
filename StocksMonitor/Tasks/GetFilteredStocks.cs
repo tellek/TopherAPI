@@ -5,6 +5,7 @@ using System.Linq;
 using static Contracts.AppSettings;
 using RestSharp;
 using Newtonsoft.Json;
+using Contracts;
 
 namespace StocksMonitor.Tasks
 {
@@ -146,7 +147,7 @@ namespace StocksMonitor.Tasks
             request.AddParameter("locale", "us");
             request.AddParameter("active", "true");
             request.AddParameter("perpage", 1000);
-            request.AddQueryParameter("apiKey", "");
+            request.AddQueryParameter("apiKey", AppSettings.Settings.PolygonApiKey);
             IRestResponse response = client.Execute(request);
 
             var content = JsonConvert.DeserializeObject<PolygonStockAssets>(response.Content);

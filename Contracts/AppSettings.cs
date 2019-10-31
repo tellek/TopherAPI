@@ -17,6 +17,8 @@ namespace Contracts
             public ulong DiscordChannel { get; set; }
             public string DiscordToken { get; set; }
             public bool ServiceHasBeenDisabled = false;
+
+            public string PolygonApiKey { get; set; }
         }
     }
 }
