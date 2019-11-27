@@ -20,6 +20,8 @@ using Microsoft.Extensions.Configuration;
 using Npgsql;
 using System.Data;
 using System.Threading;
+using StocksMonitor.Processes;
+using System.Diagnostics;
 
 namespace StocksMonitor.ScheduledJobs
 {
@@ -51,9 +53,65 @@ namespace StocksMonitor.ScheduledJobs
         {
             discord.Log("Starting up...");
 
-            
+            //Memory.StoredAssets.Clear();
+            //discord.Say($"Downloading and filtering assets...");
+            //var sw = Stopwatch.StartNew();
+            //var ac = new AssetCollection();
+            //ac.MaxPrice = 50.00m;
+            //ac.MinPrice = 10.00m;
+            //ac.FilterIfLosingValue = false;
+            //Memory.StoredAssets = ac.GetFilteredAssetsAsConcurrentDictionary();
+            //discord.Say($"{Memory.StoredAssets.Count} assets stored in memory. ({sw.Elapsed.TotalSeconds} seconds)");
+            //sw.Stop();
+
+            //var aggregates = new Dictionary<string, IEnumerable<IAgg>>();
+            //var groups = ConvertListToGroupsOfSymbols();
+            //foreach (var g in groups)
+            //{
+            //    var groupResult = client.GetBarSetAsync(g, TimeFrame.Minute, 2).GetAwaiter().GetResult();
+            //    foreach (var gr in groupResult)
+            //    {
+            //        aggregates.Add(gr.Key, gr.Value);
+            //    }
+            //}
+
+            //var possible = new Dictionary<string, IEnumerable<IAgg>>();
+
+            //foreach (var agg in aggregates)
+            //{
+            //    if (agg.Value.Count() < 2) continue;
+            //    var test = Utilities.Maths.PercentDiff(agg.Value.First().Volume, agg.Value.Last().Volume);
+            //    if (test > 500) possible.Add(agg.Key, agg.Value);
+            //}
+
+            //foreach (var item in possible)
+            //{
+            //    discord.Say($"You may want to investigate {item.Key}.");
+            //}
         }
 
+        private List<List<string>> ConvertListToGroupsOfSymbols(int groupSize = 100)
+        {
+            var assets = new List<string>();
+            foreach (var asset in Memory.StoredAssets)
+            {
+                assets.Add(asset.Key);
+            }
 
+            var AssetsGroups = new List<List<string>>();
+            int count = 0;
+            for (int i = 0; i < assets.Count; i += groupSize)
+            {
+                var temp = assets.GetRange(i, Math.Min(groupSize, assets.Count - i));
+                AssetsGroups.Add(new List<string>());
+                foreach (var item in temp)
+                {
+                    AssetsGroups[count].Add(item);
+                }
+                count++;
+            }
+            return AssetsGroups;
+        }
     }
+
 }

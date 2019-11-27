@@ -26,15 +26,16 @@ namespace TopherAPI
 
         public async void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureDiscord();
             services.ConfigureMvc();
             services.ConfigureSwagger();
             services.ConfigureDI();
-            services.ConfigureDiscord();
+            
 
             var provider = services.BuildServiceProvider();     // Build the service provider
+            await provider.GetRequiredService<DiscordBotMain>().StartAsync();
             provider.GetRequiredService<LoggingHandler>();      // Start the logging service
             provider.GetRequiredService<CommandHandler>(); 		// Start the command handler service
-            await provider.GetRequiredService<DiscordBotMain>().StartAsync();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

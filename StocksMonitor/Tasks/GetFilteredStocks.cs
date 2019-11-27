@@ -78,15 +78,6 @@ namespace StocksMonitor.Tasks
             }
         }
 
-
-
-
-
-
-
-
-
-
         private void FilterAssets(ref List<IAsset> assets)
         {
             assets = assets.Where(o => o.IsTradable

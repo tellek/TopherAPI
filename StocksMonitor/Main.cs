@@ -42,22 +42,22 @@ namespace StocksMonitor
             JobManager.AddJob(_watchSellJob, watchSellSchedule);
 
             // Every hour
-            Action<Schedule> regularSchedule = s => s.ToRunEvery(15).Minutes().Between(8, 30, 15, 00);
-            JobManager.AddJob(_regularJob, regularSchedule);
+            //Action<Schedule> regularSchedule = s => s.ToRunEvery(15).Minutes().Between(8, 30, 15, 00);
+            //JobManager.AddJob(_regularJob, regularSchedule);
 
             // Every night
-            Action<Schedule> nightlySchedule = s => s.ToRunEvery(1).Weekdays().At(2, 0);
-            JobManager.AddJob(_nightlyJob, nightlySchedule);
+            //Action<Schedule> nightlySchedule = s => s.ToRunEvery(1).Weekdays().At(2, 0);
+            //JobManager.AddJob(_nightlyJob, nightlySchedule);
 
             // Every morning
-            //Action<Schedule> morningSchedule = s => s.ToRunEvery(1).Weekdays().At(10, 0);
-            //JobManager.AddJob(_morningJob, morningSchedule);
+            Action<Schedule> morningSchedule = s => s.ToRunEvery(1).Weekdays().At(10, 0);
+            JobManager.AddJob(_morningJob, morningSchedule);
 
             // Every afternoon
-            Action<Schedule> afternoonSchedule = s => s.ToRunEvery(1).Weekdays().At(14, 58);
-            JobManager.AddJob(_afternoonJob, afternoonSchedule);
+            //Action<Schedule> afternoonSchedule = s => s.ToRunEvery(1).Weekdays().At(14, 58);
+            //JobManager.AddJob(_afternoonJob, afternoonSchedule);
 
-            // Testing something now
+            // Testing something new
             Action<Schedule> immediateSchedule = s => s.ToRunOnceIn(1).Seconds();
             JobManager.AddJob(_immediateJob, immediateSchedule);
 

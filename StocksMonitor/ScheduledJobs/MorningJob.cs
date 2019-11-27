@@ -3,7 +3,9 @@ using Discord;
 using Discord.WebSocket;
 using DiscordBot;
 using FluentScheduler;
+using StocksMonitor.Processes;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Utilities;
 using static Contracts.AppSettings;
@@ -23,6 +25,17 @@ namespace StocksMonitor.ScheduledJobs
 
         public void Execute()
         {
+            Memory.StoredAssets.Clear();
+            discord.Say($"Downloading and filtering assets...");
+            var sw = Stopwatch.StartNew();
+            var ac = new AssetCollection();
+            ac.FilterIfLosingValue = false;
+            ac.MaxPrice = 10.00m;
+            ac.MinPrice = 2.00m;
+            Memory.StoredAssets = ac.GetFilteredAssetsAsConcurrentDictionary();
+            discord.Say($"{Memory.StoredAssets.Count} assets stored in memory. ({sw.Elapsed.TotalSeconds} seconds)");
+            sw.Stop();
+
             //try
             //{
             //    client.DeleteAllOrdersAsync().GetAwaiter().GetResult();
@@ -41,7 +54,7 @@ namespace StocksMonitor.ScheduledJobs
             //            var price = Memory.OwnedStocks[pos.Symbol].PricePer;
             //            var stopDifference = Maths.Percent(price, 0.2m);
             //            var stopPrice = price - stopDifference;
-                        
+
             //            if (amount <= 0 || price <= 0) continue;
             //            var result = client.PostOrderAsync(
             //                pos.Symbol, 
@@ -58,7 +71,7 @@ namespace StocksMonitor.ScheduledJobs
             //{
             //    discord.Say($"**ERROR!** {e.Message}");
             //}
-           
+
         }
 
     }
