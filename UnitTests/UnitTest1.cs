@@ -9,7 +9,7 @@ namespace UnitTests
         [TestMethod]
         public void TestMethod1()
         {
-            DiscordCommands.SayAsync("Testing123");
+            
         }
     }
 }

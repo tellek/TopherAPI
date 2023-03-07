@@ -36,6 +36,7 @@ namespace TopherAPI
             await provider.GetRequiredService<DiscordBotMain>().StartAsync();
             provider.GetRequiredService<LoggingHandler>();      // Start the logging service
             provider.GetRequiredService<CommandHandler>(); 		// Start the command handler service
+            
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -27,7 +27,7 @@ namespace StocksMonitor.ScheduledJobs
 {
     public class ImmediateJob : IJob
     {
-        private Am.RestClient client;
+        private Am.RestClient restClient;
         private readonly DiscordCommands discord;
         private readonly WatchSellJob watchSell;
         private readonly RegularJob regularJob;
@@ -35,6 +35,12 @@ namespace StocksMonitor.ScheduledJobs
         private readonly GetAggregateData getAggregateData;
         private readonly IConfiguration configuration;
         private readonly string connectionString;
+
+        private string symbol = "SPY";
+        private Decimal scale = 200;
+
+        private Guid lastTradeId = Guid.NewGuid();
+        private List<Decimal> closingPrices = new List<Decimal>();
 
         public ImmediateJob(DiscordCommands discord, WatchSellJob watchSell, RegularJob regularJob,
             GetFilteredStocks getFilteredStocks, GetAggregateData getAggregateData, IConfiguration configuration)
@@ -45,73 +51,23 @@ namespace StocksMonitor.ScheduledJobs
             this.getFilteredStocks = getFilteredStocks;
             this.getAggregateData = getAggregateData;
             this.configuration = configuration;
-            client = new Am.RestClient(Settings.AlpacaKeyId, Settings.AlpacaSecret, Settings.AlpacaApiUrl);
+            restClient = new Am.RestClient(Settings.AlpacaKeyId, Settings.AlpacaSecret, Settings.AlpacaApiUrl);
             connectionString = configuration["ConnectionStrings:MarketDataDb"];
         }
 
         public void Execute()
         {
-            discord.Log("Starting up...");
+            var account = new AccountTasks(restClient, discord);
+            var market = new MarketTasks(restClient, discord);
 
-            //Memory.StoredAssets.Clear();
-            //discord.Say($"Downloading and filtering assets...");
-            //var sw = Stopwatch.StartNew();
-            //var ac = new AssetCollection();
-            //ac.MaxPrice = 50.00m;
-            //ac.MinPrice = 10.00m;
-            //ac.FilterIfLosingValue = false;
-            //Memory.StoredAssets = ac.GetFilteredAssetsAsConcurrentDictionary();
-            //discord.Say($"{Memory.StoredAssets.Count} assets stored in memory. ({sw.Elapsed.TotalSeconds} seconds)");
-            //sw.Stop();
+            account.CancelOrders();
 
-            //var aggregates = new Dictionary<string, IEnumerable<IAgg>>();
-            //var groups = ConvertListToGroupsOfSymbols();
-            //foreach (var g in groups)
-            //{
-            //    var groupResult = client.GetBarSetAsync(g, TimeFrame.Minute, 2).GetAwaiter().GetResult();
-            //    foreach (var gr in groupResult)
-            //    {
-            //        aggregates.Add(gr.Key, gr.Value);
-            //    }
-            //}
-
-            //var possible = new Dictionary<string, IEnumerable<IAgg>>();
-
-            //foreach (var agg in aggregates)
-            //{
-            //    if (agg.Value.Count() < 2) continue;
-            //    var test = Utilities.Maths.PercentDiff(agg.Value.First().Volume, agg.Value.Last().Volume);
-            //    if (test > 500) possible.Add(agg.Key, agg.Value);
-            //}
-
-            //foreach (var item in possible)
-            //{
-            //    discord.Say($"You may want to investigate {item.Key}.");
-            //}
+            var closeUtc = market.GetNextMarketCloseUtc();
+            var openUtc = market.GetNextMarketOpenUtc();
+            
         }
 
-        private List<List<string>> ConvertListToGroupsOfSymbols(int groupSize = 100)
-        {
-            var assets = new List<string>();
-            foreach (var asset in Memory.StoredAssets)
-            {
-                assets.Add(asset.Key);
-            }
 
-            var AssetsGroups = new List<List<string>>();
-            int count = 0;
-            for (int i = 0; i < assets.Count; i += groupSize)
-            {
-                var temp = assets.GetRange(i, Math.Min(groupSize, assets.Count - i));
-                AssetsGroups.Add(new List<string>());
-                foreach (var item in temp)
-                {
-                    AssetsGroups[count].Add(item);
-                }
-                count++;
-            }
-            return AssetsGroups;
-        }
     }
 
 }

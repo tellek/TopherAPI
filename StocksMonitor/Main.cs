@@ -38,8 +38,8 @@ namespace StocksMonitor
             JobManager.Start();
 
             // Constant job that attempts to sell at a positive percentage for profit or prevent too much loss by selling early.
-            Action<Schedule> watchSellSchedule = s => s.ToRunEvery(60).Seconds().Between(8, 30, 14, 57);
-            JobManager.AddJob(_watchSellJob, watchSellSchedule);
+            //Action<Schedule> watchSellSchedule = s => s.ToRunEvery(60).Seconds().Between(8, 30, 14, 57);
+            //JobManager.AddJob(_watchSellJob, watchSellSchedule);
 
             // Every hour
             //Action<Schedule> regularSchedule = s => s.ToRunEvery(15).Minutes().Between(8, 30, 15, 00);
@@ -50,15 +50,15 @@ namespace StocksMonitor
             //JobManager.AddJob(_nightlyJob, nightlySchedule);
 
             // Every morning
-            Action<Schedule> morningSchedule = s => s.ToRunEvery(1).Weekdays().At(10, 0);
-            JobManager.AddJob(_morningJob, morningSchedule);
+            //Action<Schedule> morningSchedule = s => s.ToRunEvery(1).Weekdays().At(10, 0);
+            //JobManager.AddJob(_morningJob, morningSchedule);
 
             // Every afternoon
             //Action<Schedule> afternoonSchedule = s => s.ToRunEvery(1).Weekdays().At(14, 58);
             //JobManager.AddJob(_afternoonJob, afternoonSchedule);
 
             // Testing something new
-            Action<Schedule> immediateSchedule = s => s.ToRunOnceIn(1).Seconds();
+            Action<Schedule> immediateSchedule = s => s.ToRunOnceIn(2).Seconds();
             JobManager.AddJob(_immediateJob, immediateSchedule);
 
             return Task.CompletedTask;
